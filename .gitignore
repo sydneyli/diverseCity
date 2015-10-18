@@ -1,0 +1,9 @@
+# Resources
+node_modules
+bin
+public/images/*
+
+# Temporary files
+*.swp
+*.swo
+*~
