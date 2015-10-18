@@ -1,4 +1,12 @@
-var express = require('express');
+var express = require('express'),
+    logger = require('morgan'),
+    passport = require('passport'),
+    session = require('express-session'),
+    LocalStrategy = require('passport-local');
+
+var config = require('./config.js'),
+    funct = require('./functions.js');
+
 var router = express.Router();
 
 /* GET home page. */
