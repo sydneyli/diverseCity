@@ -1,12 +1,12 @@
 var express =       require('express'),
-    path =          require('path'),
-    favicon =       require('serve-favicon'),
-    logger =        require('morgan'),
+    bodyParser =    require('body-parser'),
     cookieParser =  require('cookie-parser'),
-    bodyParser =    require('body-parser')
+    mongoose =      require('mongoose'),
+    logger =        require('morgan'),
     passport =      require('passport'),
-    session =       require('express-session'),
-    LocalStrategy = require('passport-local');
+    LocalStrategy = require('passport-local').Strategy,
+    path =          require('path'),
+    favicon =       require('serve-favicon');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -23,10 +23,27 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(require('express-session')({
+    secret: 'unicorns',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
+
+// passport config
+var Account = require('./models/account');
+passport.use(new LocalStrategy(Account.authenticate()));
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
+
+//mongoose
+mongoose.connect('mongodb://localhost/passport_local_diversecity');
+
+//app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
