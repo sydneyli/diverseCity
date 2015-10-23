@@ -1,4 +1,5 @@
 var express =       require('express'),
+    expressLayouts = require('express-ejs-layouts'),
     bodyParser =    require('body-parser'),
     cookieParser =  require('cookie-parser'),
     mongoose =      require('mongoose'),
@@ -8,14 +9,16 @@ var express =       require('express'),
     path =          require('path'),
     favicon =       require('serve-favicon');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var routes = require('./routes/index.js');
 
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'ejs');
+app.use(expressLayouts);
+app.set('layout', 'partials/layout.ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -42,8 +45,6 @@ passport.deserializeUser(Account.deserializeUser());
 
 //mongoose
 mongoose.connect('mongodb://localhost/passport_local_diversecity');
-
-//app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

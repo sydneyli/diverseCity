@@ -5,14 +5,17 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express', user: req.user });
+  console.log('rendering home page');
+  res.render('error', { title: 'Express', user: req.user });
 });
 
 router.get('/register', function(req, res) {
+  console.log('rendering register');
   res.render('register', { });
 });
 
 router.post('/register', function(req, res) {
+  console.log('posting', req);
   Account.register(
       new Account({ username : req.body.username }),
       req.body.password,
@@ -27,7 +30,7 @@ router.post('/register', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-    res.render('login', { user : req.user });
+    res.render('login' /*, { user : req.user }*/);
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
