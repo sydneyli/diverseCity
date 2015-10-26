@@ -6,7 +6,7 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   console.log('rendering home page');
-  res.render('error', { title: 'Express', user: req.user });
+  res.render('index', {});
 });
 
 router.get('/register', function(req, res) {
