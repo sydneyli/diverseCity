@@ -1,9 +1,13 @@
 var gulp = require('gulp'),
     react = require('gulp-react'),
+    babel = require('gulp-babel'),
+    webpack = require('gulp-webpack'),
+    browserify = require('browserify'),
     browser_sync = require( 'browser-sync' ).create(),
     nodemon = require('gulp-nodemon'),
     livereload = require('gulp-livereload'),
-    node;
+    requirejs = require('gulp-requirejs'),
+    sass = require('gulp-sass');
 
 /* 
  * Resources:
@@ -15,6 +19,8 @@ var paths = {
   //ALL: ['src/js/*.js', 'src/js/**/*.js', 'src/index.html'],
   JS_BUILD_DEST: ['public/js', 'public/components'],
   JS_SOURCE: ['src/js/*.js', 'src/components/*.js'],
+  CSS_SOURCE: ['src/css/*'],
+  CSS_BUILD_DEST: ['./public/stylesheets'],
   SERVER: ['app.js', 'routes/*.js'],
   VISUAL: ['./public/**/*.*', './views/*.*'],
   COMPONENTS: ['public/components/*.js'],
@@ -34,19 +40,39 @@ var options = {
     }
 };
 
+/*------------------------SASS---------------------------------*/
+gulp.task('sass', function() {
+  gulp.src(paths.CSS_SOURCE)
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest(paths.CSS_BUILD_DEST[0]));
+});
+
+gulp.task('watch_sass', function() {
+  gulp.watch(paths.CSS_SOURCE, ['sass']);
+});
+
+/*------------------------SASS---------------------------------*/
+
 /*------------------------JS+REACT----------------------------*/
 //Transforms ES6 and React JSX syntax to vanilla JS
 gulp.task('transform_jsx', function() {
-  gulp.src(paths.JS_SOURCE[0])
-    .pipe(react())
-    .pipe(gulp.dest(paths.JS_BUILD_DEST[0]));
-  gulp.src(paths.JS_SOURCE[1])
-    .pipe(react())
-    .pipe(gulp.dest(paths.JS_BUILD_DEST[1]));
+  return browserify({
+    debug: true,
+    entries: ['./src/components/SignInForm.react.js']
+  }).bundle()
+    .pipe(gulp.dest('bundle.js'));
+  // gulp.src(paths.JS_SOURCE[0])
+  //   .pipe(babel())
+  //   .pipe(browserify())
+  //   .pipe(gulp.dest(paths.JS_BUILD_DEST[0]));
+  // gulp.src(paths.JS_SOURCE[1])
+  //   .pipe(babel())
+  //   .pipe(browserify())
+  //   .pipe(gulp.dest(paths.JS_BUILD_DEST[1]));
 });
 
 gulp.task('compile_js', function() {
-  gulp.watch(paths.JS, ['transform_jsx']);
+  gulp.watch(paths.JS_SOURCE, ['transform_jsx']);
 });
 
 /*------------------------JS+REACT----------------------------*/
@@ -78,4 +104,4 @@ gulp.task('serve', function (callback) {
 /*------------------------NODE_SERVER----------------------------*/
 
 
-gulp.task('default', ['compile_js', 'browser-sync']);
+gulp.task('default', ['watch_sass', 'compile_js', 'browser-sync']);
