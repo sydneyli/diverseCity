@@ -7,7 +7,12 @@ var gulp = require('gulp'),
     nodemon = require('gulp-nodemon'),
     livereload = require('gulp-livereload'),
     requirejs = require('gulp-requirejs'),
-    sass = require('gulp-sass');
+    sass = require('gulp-sass'),
+    uglify = require('gulp-uglify'),
+    source = require('vinyl-source-stream'),
+    watchify = require('watchify'),
+    reactify = require('reactify'),
+    streamify = require('gulp-streamify');
 
 /* 
  * Resources:
@@ -56,19 +61,13 @@ gulp.task('watch_sass', function() {
 /*------------------------JS+REACT----------------------------*/
 //Transforms ES6 and React JSX syntax to vanilla JS
 gulp.task('transform_jsx', function() {
-  return browserify({
-    debug: true,
-    entries: ['./src/components/SignInForm.react.js']
-  }).bundle()
-    .pipe(gulp.dest('bundle.js'));
-  // gulp.src(paths.JS_SOURCE[0])
-  //   .pipe(babel())
-  //   .pipe(browserify())
-  //   .pipe(gulp.dest(paths.JS_BUILD_DEST[0]));
-  // gulp.src(paths.JS_SOURCE[1])
-  //   .pipe(babel())
-  //   .pipe(browserify())
-  //   .pipe(gulp.dest(paths.JS_BUILD_DEST[1]));
+    return browserify({ 
+      entries: ['src/js/login.js'],
+      transform: [reactify]
+    })
+        .bundle()
+        .pipe(source('login.js'))
+        .pipe(gulp.dest('public/js'));
 });
 
 gulp.task('compile_js', function() {

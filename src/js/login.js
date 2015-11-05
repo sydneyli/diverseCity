@@ -1,8 +1,8 @@
 var React = require('react');
-var TestComponent = require('../components/TestComponent');
+var SignInForm = require('../components/SignInForm.react');
 
-console.log('logging in');
+
 React.render(
-	<TestComponent />,
+	<SignInForm />,
 	document.getElementById("body")
 );
